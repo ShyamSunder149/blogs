@@ -3,6 +3,7 @@ import { PrismaClient } from "@prisma/client";
 import constructQueryConditions from "./utils";
 import checkAuth from "../middlewares/middlewares";
 import { getServerSession } from "next-auth";
+import { NEXT_AUTH } from "@/app/lib/auth";
 
 const prisma = new PrismaClient();
 
@@ -14,9 +15,14 @@ type paramtype = {
 
 export const GET = async (req: NextRequest, { params }: paramtype) => {
   try {
-    const authResponse = await checkAuth();
-    if (authResponse) {
-      return authResponse;
+    const session = await getServerSession();
+    if (!session || !session.user) {
+      return NextResponse.json(
+        {
+          message: "Unauthorised",
+        },
+        { status: 403 }
+      );
     }
 
     if (params == null) {
@@ -24,10 +30,14 @@ export const GET = async (req: NextRequest, { params }: paramtype) => {
       return NextResponse.json({ data: blogs }, { status: 200 });
     }
 
+    console.log(params)
+
     let queryConditions: Record<string, any> = constructQueryConditions(params);
+    console.log(queryConditions)
     const blogs = await prisma.blog.findMany({
       where: queryConditions,
     });
+    console.log(blogs)
     return NextResponse.json({ data: blogs }, { status: 200 });
   } catch (err: any) {
     console.error("Error during signup:", err);
@@ -41,17 +51,32 @@ export const GET = async (req: NextRequest, { params }: paramtype) => {
 export const POST = async (req: NextRequest, res: NextResponse) => {
   try {
     const session = await getServerSession();
+    if (!session || !session.user) {
+      return NextResponse.json(
+        {
+          message: "Unauthorised",
+        },
+        { status: 403 }
+      );
+    }
+
+    console.log(session)
+
     const { title, thumbnail, content } = await req.json();
     const blog = {
       title: title,
       thumbnail: thumbnail,
       content: content,
-      authorId: session?.user,
+      authorId: 3,
     };
+
+    console.log(blog);
 
     const newBlog = await prisma.blog.create({
       data: blog,
     });
+
+    console.log(newBlog)
 
     return NextResponse.json(
       {

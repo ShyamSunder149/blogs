@@ -5,12 +5,13 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card"
+import { redirect } from 'next/navigation';
 
 type Userinfo = {
-    username : string | null | undefined
+    username: string | null | undefined
 }
 
-export default function BlogList(props : Userinfo) {
+export default function BlogList(props: Userinfo) {
     return (
         <div className="p-5">
             <div className="p-5">
@@ -48,6 +49,9 @@ export default function BlogList(props : Userinfo) {
                         Read more button
                     </CardContent>
                 </Card>
+                <div>
+                    <button onClick={() => redirect("/createBlog")}>Create your blog</button>
+                </div>
             </div>
         </div>
     );

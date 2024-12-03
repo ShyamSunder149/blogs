@@ -5,6 +5,8 @@ import Link from "next/link"
 import { signIn, signOut } from "next-auth/react"
 import { ModeToggle } from "../ui/dark_mode_button"
 import { useSession } from "next-auth/react"
+import { redirect } from 'next/navigation';
+import { usePathname } from 'next/navigation'
 
 import {
   NavigationMenu,
@@ -13,6 +15,10 @@ import {
   NavigationMenuList,
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu"
+
+function profile() {
+
+}
 
 export function Appbar() {
 
@@ -28,7 +34,7 @@ export function Appbar() {
       <div className="ml-auto">
         <NavigationMenu>
           <NavigationMenuList>
-          {session.data === null ? (
+            {session.data === null ? (
               <NavigationMenuItem>
                 <NavigationMenuLink onClick={() => signIn()} className={navigationMenuTriggerStyle()}>
                   Login
@@ -36,6 +42,14 @@ export function Appbar() {
               </NavigationMenuItem>
             ) : (
               <NavigationMenuItem>
+                {usePathname() !== "/" ?
+                  <NavigationMenuLink onClick={() => redirect("/")} className={navigationMenuTriggerStyle()}>
+                    Home
+                  </NavigationMenuLink>
+                  : null}
+                <NavigationMenuLink onClick={() => redirect("/profile")} className={navigationMenuTriggerStyle()}>
+                  Profile
+                </NavigationMenuLink>
                 <NavigationMenuLink onClick={() => signOut()} className={navigationMenuTriggerStyle()}>
                   Logout
                 </NavigationMenuLink>

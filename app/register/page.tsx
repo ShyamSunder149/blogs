@@ -128,6 +128,7 @@ function UserAuthForm({ className, ...props }: UserAuthFormProps) {
                             disabled={isLoading}
                             name = "email"
                             onChange={(e) => handleInputChange(e)}
+                            required
                         />
                     </div>
                     <div className="grid gap-1">
@@ -144,6 +145,7 @@ function UserAuthForm({ className, ...props }: UserAuthFormProps) {
                             disabled={isLoading}
                             name = "password"
                             onChange={(e) => handleInputChange(e)}
+                            required
                         />
                     </div>
                     <Button disabled={isLoading}>

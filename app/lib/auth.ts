@@ -1,8 +1,31 @@
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcrypt";
 import { PrismaClient } from "@prisma/client";
+import { Session, User } from "next-auth";
+import { JWT } from "next-auth/jwt";
 
 const prisma = new PrismaClient();
+
+declare module "next-auth" {
+  interface Session {
+    user: {
+      id: string;
+      email?: string | null;
+      name?: string | null;
+      image?: string | null;
+    };
+  }
+}
+
+interface JwtCallbackParams {
+  token: JWT;
+  user?: User | null;
+}
+
+interface SessionCallbackParams {
+  session: Session;
+  token: JWT;
+}
 
 export const NEXT_AUTH = {
   providers: [
@@ -13,12 +36,13 @@ export const NEXT_AUTH = {
         password: { label: "password", type: "password" },
       },
       async authorize(credentials: any) {
-        const hashedPassword = await bcrypt.hash(credentials.password, 12);
         const existingUser = await prisma.user.findFirst({
           where: {
             email: credentials.email,
           },
         });
+
+        console.log(existingUser);
 
         if (existingUser) {
           const passwordValidation = await bcrypt.compare(
@@ -32,7 +56,7 @@ export const NEXT_AUTH = {
             };
           }
         }
-        console.log("login failes")
+        console.log("Login Failed");
         return null;
       },
     }),
@@ -40,5 +64,24 @@ export const NEXT_AUTH = {
   secret: process.env.NEXTAUTH_SECRET,
   pages: {
     signIn: "/login",
+  },
+  session: {
+    strategy: "jwt",
+  },
+  callbacks: {
+    async jwt({ token, user }: JwtCallbackParams): Promise<JWT> {
+      if (user) {
+        token.id = user.id;
+        token.email = user.email;
+      }
+      return token;
+    },
+    async session({ session, token }: SessionCallbackParams): Promise<Session> {
+      if (session.user) {
+        session.user.id = token.id as string;
+        session.user.email = token.email as string;
+      }
+      return session;
+    },
   },
 };
