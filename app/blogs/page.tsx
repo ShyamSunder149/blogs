@@ -1,58 +1,24 @@
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
-} from "@/components/ui/card"
 import { redirect } from 'next/navigation';
+import { Button } from '@/components/ui/button';
+import BlogList from "@/components/app_components/Bloglist";
 
 type Userinfo = {
     username: string | null | undefined
 }
 
-export default function BlogList(props: Userinfo) {
+export default function BlogsForHome(props: Userinfo) {
     return (
         <div className="p-5">
             <div className="p-5">
                 <span className="font-semibold text-2xl">Good Morning {props.username}, </span><br />
                 Here are the list of available Blogs...
             </div>
-            <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-                <Card >
-                    <CardHeader>
-                        <CardTitle>Blog Title</CardTitle>
-                        <CardDescription>Author Name, Last Modified Date.</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                        Some Content
-                        Read more button
-                    </CardContent>
-                </Card>
-                <Card >
-                    <CardHeader>
-                        <CardTitle>Blog Title</CardTitle>
-                        <CardDescription>Author Name, Last Modified Date.</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                        Some Content
-                        Read more button
-                    </CardContent>
-                </Card>
-                <Card >
-                    <CardHeader>
-                        <CardTitle>Blog Title</CardTitle>
-                        <CardDescription>Author Name, Last Modified Date.</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                        Some Content
-                        Read more button
-                    </CardContent>
-                </Card>
-                <div>
-                    <button onClick={() => redirect("/createBlog")}>Create your blog</button>
-                </div>
+
+            <div className='text-center p-5'>
+                <Button onClick={() => redirect("/createBlog")}>Create your blog</Button>
             </div>
+            <div className='text-xl font-semibold'>Blogs Published </div>
+            <BlogList userAuthorId={null}/>
         </div>
     );
 }

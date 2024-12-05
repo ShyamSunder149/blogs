@@ -1,38 +1,40 @@
 "use client"
 
-import { useState, useEffect } from 'react';
 import { Blog } from "../types/Blog";
-import axios from 'axios';
 import { useSession } from 'next-auth/react';
 import { Appbar } from '@/components/app_components/Appbar';
-
-type Blogs = {
-    data : Array<Blog>
-}
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import BlogList from '@/components/app_components/Bloglist';
 
 export default function ProfilePage() {
 
-    const [blogs, setBlogs] = useState<Blogs>();
     const session = useSession();
-
-    useEffect(() => {
-
-        async function getBlogs() {
-            const response = await axios.get('http://localhost:3000/api/blogs?authorId=3');
-            setBlogs(response.data)
-        }
-
-        getBlogs();
-    }, [])
 
     return (
         <div>
-            <Appbar/>
-            Profile <br />
-            Email : {session.data?.user.email} <br />
-            Name : {session.data?.user.name ? session.data?.user.name : "Name not set"} <button> Set Name </button><br />
-            list all blogs <br/>
-            {blogs?.data?.map(blog => { return (<div>{blog.title} - {blog.content} <br/></div>)})}
+            <Appbar />
+            <div className='p-5'>
+                <div className='flex flex-row gap-4 justify-center'>
+                    <Avatar className='size-24'>
+                        <AvatarImage src="https://github.com/shadcn.png" />
+                        <AvatarFallback>CN</AvatarFallback>
+                    </Avatar>
+                    <div className='text-4xl font-semibold mt-6'>Profile</div>
+                </div>
+                <hr className='mt-5' />
+                <br />
+                <div className='flex flex-col gap-4 text-xl'>
+                    <div>Email : {session.data?.user.email}</div>
+                    <div className='flex flex-row gap-4'>Name : {session.data?.user.name ? session.data?.user.name : "Name not set"}
+                        <button> Set Name </button>
+                    </div>
+                </div>
+                <hr className='mt-5'/>
+                <div className='flex flex-col'>
+                    <div className='font-semibold text-2xl p-5'>Your Blogs</div>
+                    <BlogList userAuthorId={3}/>
+                </div>
+            </div>
         </div>
     )
 }

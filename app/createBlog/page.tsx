@@ -7,6 +7,13 @@ import { useRouter } from "next/navigation";
 import { Label } from "@/components/ui/label";
 import { Appbar } from "@/components/app_components/Appbar";
 import axios from 'axios';
+import { Terminal } from "lucide-react"
+
+import {
+    Alert,
+    AlertDescription,
+    AlertTitle,
+} from "@/components/ui/alert"
 
 export default function CreateBlog() {
 
@@ -55,8 +62,14 @@ export default function CreateBlog() {
             <div className="p-5 grid gap-6">
                 <h2>Create Blog</h2>
 
-                {success && <div className="text-green-500">Blog created successfully!</div>}
-                {error && <div className="text-red-500">{error}</div>}
+                {success && <Alert>
+                    <Terminal className="h-4 w-4" />
+                    <AlertTitle>Blog Created Successfully</AlertTitle>
+                </Alert>}
+                {error && <Alert>
+                    <Terminal className="h-4 w-4" />
+                    <AlertTitle>{error}</AlertTitle>
+                </Alert>}
 
                 <form onSubmit={onSubmit}>
                     <div className="grid gap-2">

@@ -30,17 +30,16 @@ export const GET = async (req: NextRequest, { params }: paramtype) => {
       return NextResponse.json({ data: blogs }, { status: 200 });
     }
 
-    console.log(params)
+    console.log(params);
 
     let queryConditions: Record<string, any> = constructQueryConditions(params);
-    console.log(queryConditions)
+    console.log(queryConditions);
     const blogs = await prisma.blog.findMany({
       where: queryConditions,
     });
-    console.log(blogs)
+    console.log(blogs);
     return NextResponse.json({ data: blogs }, { status: 200 });
   } catch (err: any) {
-    console.error("Error during signup:", err);
     return NextResponse.json(
       { message: "Internal Server Error", error: err.message },
       { status: 500 }
@@ -60,14 +59,14 @@ export const POST = async (req: NextRequest, res: NextResponse) => {
       );
     }
 
-    console.log(session)
+    console.log(session);
 
     const { title, thumbnail, content } = await req.json();
     const blog = {
       title: title,
       thumbnail: thumbnail,
       content: content,
-      authorId: 3,
+      authorId: Number(session?.user?.id),
     };
 
     console.log(blog);
@@ -76,7 +75,7 @@ export const POST = async (req: NextRequest, res: NextResponse) => {
       data: blog,
     });
 
-    console.log(newBlog)
+    console.log(newBlog);
 
     return NextResponse.json(
       {
@@ -84,11 +83,9 @@ export const POST = async (req: NextRequest, res: NextResponse) => {
       },
       { status: 200 }
     );
-  } catch (err) {
+  } catch (err : any) {
     return NextResponse.json(
-      {
-        message: "Internal Server Error",
-      },
+      { message: "Internal Server Error", error: err.message },
       { status: 500 }
     );
   }
